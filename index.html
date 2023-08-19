@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>ChatBot Interface</title>
+    <style>
+        /* Style for the chat container */
+        #chat-container {
+            border: 1px solid #ccc;
+            padding: 20px;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        /* Style for user messages */
+        .user-message {
+            background-color: #f2f2f2;
+            padding: 5px 10px;
+            margin: 5px 0;
+            border-radius: 10px;
+        }
+
+        /* Style for bot messages */
+        .bot-message {
+            background-color: #d4edda;
+            padding: 5px 10px;
+            margin: 5px 0;
+            border-radius: 10px;
+        }
+
+        /* Style for user input */
+        #user-input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+
+        /* Style for send button */
+        #send-button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div id="chat-container">
+        <div id="chat-history"></div>
+        <input type="text" id="user-input" placeholder="Type your message...">
+        <button id="send-button">Send</button>
+    </div>
+
+    <script>
+        const chatHistory = document.getElementById('chat-history');
+        const userInput = document.getElementById('user-input');
+        const sendButton = document.getElementById('send-button');
+
+        sendButton.addEventListener('click', () => {
+            const userMessage = userInput.value;
+            userInput.value = '';
+            displayUserMessage(userMessage);
+            sendUserMessageToBackend(userMessage);
+        });
+
+        function displayUserMessage(message) {
+            chatHistory.innerHTML += `<div class="user-message">${message}</div>`;
+        }
+
+        function displayBotMessage(message) {
+            chatHistory.innerHTML += `<div class="bot-message">${message}</div>`;
+        }
+
+        async function sendUserMessageToBackend(message) {
+            const response = await fetch('/get_response', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ message: message })
+            }).then(response => response.json());
+
+            displayBotMessage(response.message);
+        }
+    </script>
+</body>
+</html>
